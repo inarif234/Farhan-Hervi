@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hervi Lens | Portofolio Fotografer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .serif-italic {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        /* Navigasi Rounded Bidang */
+        .nav-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #e5e7eb;
+            border-radius: 9999px;
+            padding: 0.75rem 2rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        /* Logo Styling */
+        .logo-text {
+            font-weight: 700;
+            letter-spacing: -0.05em;
+        }
+        .logo-accent {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 400;
+            color: #a1a1aa;
+            margin-left: 0.1em;
+        }
+
+        /* Gallery Bento Layout */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 200px;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-container {
+                grid-template-columns: repeat(4, 1fr);
+                grid-auto-rows: 250px;
+                gap: 1.5rem;
+            }
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            background-color: #18181b;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: grayscale(100%);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            filter: grayscale(0%);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .span-2-2 { grid-column: span 2; grid-row: span 2; }
+        .span-1-2 { grid-row: span 2; }
+        .span-2-1 { grid-column: span 2; }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .contact-card {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 32px;
+            padding: 40px;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .modal-overlay.active .contact-card {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900">
+
+    <!-- Navigasi dalam Bidang Rounded -->
+    <nav class="fixed w-full z-50 px-6">
+        <div class="max-w-7xl mx-auto flex justify-center">
+            <div class="nav-container flex items-center gap-8 md:gap-12 w-full justify-between">         
+                <a href="#" class="logo-text text-xl uppercase tracking-tighter hidden md:block">
+                <a href="#" class="logo-text text-sm md:text-xl uppercase tracking-tighter">
+                Herv<span class="logo-accent">Lens</span>
+                </a>
+                <div class="flex space-x-6 md:space-x-8 text-[10px] font-bold uppercase tracking-widest ml-auto">
+                    <a href="#home" class="hover:text-zinc-500 transition">Home</a>
+                    <a href="#about" class="hover:text-zinc-500 transition">Profile</a>
+                    <a href="#gallery" class="hover:text-zinc-500 transition">Gallery</a>
+                    <button onclick="openContactModal()" class="hover:text-zinc-500 transition uppercase tracking-widest">Contact</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="h-screen flex items-center justify-center relative overflow-hidden bg-zinc-900 text-white">
+        <div class="absolute inset-0 z-0">
+            <img src="aset/hero.jpg" 
+                 alt="Foto Latar Belakang Hero" 
+                 class="w-full h-full object-cover opacity-30">
+        </div>
+        <div class="relative z-10 text-center px-6">
+            <span class="uppercase tracking-[0.4em] text-[10px] mb-6 block fade-in font-medium text-zinc-400">Professional Photographer</span>
+            <h1 class="text-5xl md:text-8xl font-bold mb-10 fade-in tracking-tight leading-tight">
+                Capturing Moments<br>
+                <span class="serif-italic font-light text-zinc-300">Through the Lens</span>
+            </h1>
+            <a href="#gallery" class="inline-block border border-white/20 bg-white/5 backdrop-blur-md px-10 py-4 rounded-full uppercase tracking-widest text-[10px] font-bold hover:bg-white hover:text-zinc-900 transition duration-500 fade-in">
+                See Complete Gallery
+            </a>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-32 px-6 max-w-7xl mx-auto text-center">
+        <div class="mb-20 fade-in">
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight">
+                Selected <span class="serif-italic font-light text-zinc-400">Works</span>
+            </h2>
+            <div class="h-1 w-12 bg-zinc-900 mx-auto mt-6"></div>
+        </div>
+
+       <div class="gallery-container text-left">
+
+       <div class="gallery-item span-2-2 fade-in">
+           <img src="aset/gallery/image1.jpg" alt="Foto Portrait">
+           <div class="gallery-overlay">
+               <h4 class="text-white text-lg font-bold">Lost in Motion, Found in Emotion</h4>
+           </div>
+       </div>
+
+       <div class="gallery-item span-1-2 fade-in">
+           <img src="aset/gallery/image2.jpg" alt="Foto Portrait">
+           <div class="gallery-overlay">
+              <h4 class="text-white text-lg font-bold">Title2</h4>
+          </div>
+       </div>
+
+       <div class="gallery-item fade-in">
+          <img src="aset/gallery/image3.jpg" alt="Foto Portrait">
+          <div class="gallery-overlay">
+              <h4 class="text-white text-md font-bold">Voices Surrounded by Silence</h4>
+          </div>
+       </div>
+
+    <div class="gallery-item fade-in">
+        <img src="aset/gallery/image4.jpg" alt="Foto Portrait">
+        <div class="gallery-overlay">
+            <h4 class="text-white text-md font-bold">Title4</h4>
+        </div>
+    </div>
+
+    <div class="gallery-item span-2-1 fade-in">
+        <img src="aset/gallery/image5.jpg" alt="Foto Portrait">
+        <div class="gallery-overlay">
+            <h4 class="text-white text-lg font-bold">Every Note Tells a Story</h4>
+        </div>
+    </div>
+
+    <div class="gallery-item fade-in">
+        <img src="aset/gallery/image6.jpg" alt="Foto Portrait">
+        <div class="gallery-overlay">
+            <h4 class="text-white text-md font-bold">Voices in the Glow of Shadows</h4>
+        </div>
+    </div>
+
+    <div class="gallery-item fade-in">
+        <img src="aset/gallery/image7.jpg" alt="Foto Portrait">
+        <div class="gallery-overlay">
+           <h4 class="text-white text-md font-bold">Title7</h4>
+        </div>
+    </div>
+
+  </div>
+
+        <div class="mt-20 fade-in">
+            <button class="border border-zinc-200 px-12 py-4 rounded-full uppercase tracking-[0.2em] text-[10px] font-bold hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition duration-500">
+                See Complete Gallery
+            </button>
+        </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section id="about" class="bg-zinc-100 py-32 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+            <div class="w-full lg:w-1/2 fade-in">
+                <div class="relative">
+                    <img src="aset/profile.jpg" 
+                         alt="Foto Farhan Hervi" 
+                         class="rounded-3xl grayscale hover:grayscale-0 transition duration-1000 shadow-2xl w-full h-full object-cover">
+                    <!-- Updated Experience Element -->
+                    <div class="absolute -bottom-8 -right-8 bg-zinc-900 text-white p-8 rounded-3xl shadow-2xl hidden md:block border-4 border-white">
+                        <p class="text-4xl font-bold mb-1">+10</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Years<br>Experience</p>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full lg:w-1/2 fade-in">
+                <h2 class="text-5xl font-bold mb-8 tracking-tight leading-tight">
+                    Behind<br>
+                    <span class="serif-italic font-light text-zinc-500 text-6xl">The Camera</span>
+                </h2>
+                <div class="space-y-6 text-zinc-600 leading-relaxed font-light text-lg">
+                    <p>
+                        I am <strong>Farhan Hervi</strong>, a storyteller through visual frames who believes that every moment carries a unique soul. With over a decade of experience, my focus is on capturing authenticity in every subject.
+                    </p>
+                    <p>
+                        For me, the camera goes beyond being a tool. It becomes an extension of my perspective, driven by curiosity and a profound appreciation for the beauty hidden in everyday moments.
+                    </p>
+                </div>
+                <button onclick="openContactModal()" class="mt-10 bg-zinc-900 text-white px-10 py-4 rounded-full uppercase tracking-widest text-[10px] font-bold hover:bg-zinc-700 transition shadow-xl shadow-zinc-200">Reed more</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Terstruktur -->
+    <footer class="bg-white border-t border-zinc-200 pt-24 pb-12 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+            <!-- Brand Column -->
+            <div class="md:col-span-2">
+                <a href="#" class="logo-text text-2xl uppercase tracking-tighter mb-8 block">
+                    Herv<span class="logo-accent">Lens</span>
+                </a>
+                <p class="text-zinc-500 text-sm max-w-sm leading-relaxed font-light">
+                    Capturing the essence of time and beauty in every moment. Delivering professional documentation with high artistic standards.
+                </p>
+            </div>
+
+            <!-- Navigasi Column -->
+            <div>
+                <h4 class="text-[10px] font-bold uppercase tracking-[0.3em] mb-8 text-zinc-900">Navigation</h4>
+                <ul class="space-y-4 text-sm text-zinc-500 font-light">
+                    <li><a href="#home" class="hover:text-zinc-900 transition">Home</a></li>
+                    <li><a href="#about" class="hover:text-zinc-900 transition">Profile</a></li>
+                    <li><a href="#gallery" class="hover:text-zinc-900 transition">Gallery</a></li>
+                </ul>
+            </div>
+
+            <!-- Kontak & Sosmed Column -->
+            <div>
+                <h4 class="text-[10px] font-bold uppercase tracking-[0.3em] mb-8 text-zinc-900">Contact</h4>
+                <ul class="space-y-5 text-sm text-zinc-500 font-light">
+                    <li>
+                        <a href="https://instagram.com" class="flex items-center gap-3 hover:text-zinc-900 transition">
+                            <i class="fa-brands fa-instagram text-base"></i> Instagram
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://linkedin.com" class="flex items-center gap-3 hover:text-zinc-900 transition">
+                            <i class="fa-brands fa-linkedin text-base"></i> LinkedIn
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto pt-8 border-t border-zinc-100 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-semibold">&copy; 2024 Farhan Hervi</p>
+        </div>
+    </footer>
+
+
+    <!-- Contact Pop-up Modal (UPDATED COLORS) -->
+    <div id="contactModal" class="modal-overlay" onclick="closeContactModal()">
+        <div class="contact-card shadow-2xl" onclick="event.stopPropagation()">
+            <button onclick="closeContactModal()" class="absolute top-8 right-8 text-zinc-400 hover:text-black transition text-3xl">&times;</button>
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-3 tracking-tight">Let’s <span class="serif-italic font-light">Discuss</span></h2>
+                <p class="text-zinc-400 uppercase tracking-widest text-[9px] font-bold">Send a message and schedule a time</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- WhatsApp Card -->
+                <a href="https://wa.me/628123456789" target="_blank" class="group flex items-center p-8 bg-zinc-100 rounded-3xl border border-transparent hover:bg-green-500 transition-all duration-500">
+                    <div class="w-14 h-14 bg-green-500 text-white rounded-2xl flex items-center justify-center text-2xl mr-5 shadow-lg shadow-green-100 group-hover:scale-110 group-hover:bg-white group-hover:text-green-500 transition-all duration-500">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div class="text-left">
+                        <h4 class="font-bold text-base group-hover:text-white transition-colors duration-500">WhatsApp</h4>
+                        <p class="text-[9px] text-zinc-400 uppercase font-bold tracking-tighter group-hover:text-green-50 transition-colors duration-500">Phone & Chat</p>
+                    </div>
+                </a>
+                
+                <!-- Email Card -->
+                <a href="mailto:hello@farhanhervi.com" class="group flex items-center p-8 bg-zinc-100 rounded-3xl border border-transparent hover:bg-blue-600 transition-all duration-500">
+                    <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl mr-5 shadow-lg shadow-blue-100 group-hover:scale-110 group-hover:bg-white group-hover:text-blue-600 transition-all duration-500">
+                        <i class="fa-regular fa-envelope"></i>
+                    </div>
+                    <div class="text-left">
+                        <h4 class="font-bold text-base group-hover:text-white transition-colors duration-500">Email</h4>
+                        <p class="text-[9px] text-zinc-400 uppercase font-bold tracking-tighter group-hover:text-blue-50 transition-colors duration-500">Inquiry Kerja</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="modal-overlay" onclick="closeLightbox()">
+        <button class="absolute top-10 right-10 text-white text-4xl">&times;</button>
+        <img src="" id="lightboxImg" class="max-w-[85%] max-h-[85vh] object-contain rounded-xl shadow-2xl">
+    </div>
+
+    <script>
+        function openContactModal() {
+            document.getElementById('contactModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        document.querySelectorAll('.gallery-item img').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                lightbox.classList.add('active');
+                lightboxImg.src = item.src;
+                document.body.style.overflow = 'hidden';
+            });
+        });
+    </script>
+</body>
+</html>
